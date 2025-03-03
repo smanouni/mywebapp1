@@ -30,7 +30,7 @@ test:
 
 security:
   stage: security
-  image: openjdk:21
+  image: openjdk:21-slim
   before_script:
     - apt-get update && apt-get install -y wget unzip
     - wget -O ZAP_2_14_0.zip https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2_14_0.zip
@@ -39,8 +39,6 @@ security:
     - chmod +x zap/ZAP_2.14.0/zap.sh
   script:
     - zap/ZAP_2.14.0/zap.sh -cmd -quickurl http://localhost:8080 -quickprogress
-
-
 
 
 package:
