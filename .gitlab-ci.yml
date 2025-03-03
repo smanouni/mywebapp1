@@ -30,11 +30,16 @@ test:
 
 security:
   stage: security
-  image: ghcr.io/zaproxy/zap:stable
+  image: openjdk:21
   before_script:
-    - echo "$GITHUB_TOKEN" | docker login ghcr.io -u USERNAME --password-stdin
+    - apt-get update && apt-get install -y wget unzip
+    - wget -O ZAP_2_14_0.zip https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2_14_0.zip
+    - unzip ZAP_2_14_0.zip -d zap
+    - export PATH=$PATH:$(pwd)/zap/ZAP_2.14.0
+    - chmod +x zap/ZAP_2.14.0/zap.sh
   script:
-    - zap-baseline.py -t http://localhost:8080
+    - zap/ZAP_2.14.0/zap.sh -cmd -quickurl http://localhost:8080 -quickprogress
+
 
 
 
