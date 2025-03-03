@@ -32,13 +32,14 @@ security:
   stage: security
   image: openjdk:21-slim
   before_script:
-    - apt-get update && apt-get install -y wget unzip
-    - wget -O ZAP_2_14_0.zip https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2_14_0.zip
-    - unzip ZAP_2_14_0.zip -d zap
-    - export PATH=$PATH:$(pwd)/zap/ZAP_2.14.0
-    - chmod +x zap/ZAP_2.14.0/zap.sh
+    - apt-get update && apt-get install -y wget unzip tar
+    - wget -O ZAP_Linux.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
+    - mkdir zap && tar -xzf ZAP_Linux.tar.gz -C zap --strip-components=1
+    - export PATH=$PATH:$(pwd)/zap
+    - chmod +x zap/zap.sh
   script:
-    - zap/ZAP_2.14.0/zap.sh -cmd -quickurl http://localhost:8080 -quickprogress
+    - zap/zap.sh -cmd -quickurl http://localhost:8080 -quickprogress
+
 
 
 package:
