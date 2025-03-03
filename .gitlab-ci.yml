@@ -1,0 +1,57 @@
+stages:
+  - validate
+  - compile
+  - test
+  - security
+  - package
+  - quality
+  - deploy
+
+validate:
+  stage: validate
+  image: node:latest
+  before_script:
+    - npm install -g htmlhint
+  script:
+    - htmlhint src/index.html || true
+
+compile:
+  stage: compile
+  script:
+    - echo "Pas de compilation nécessaire pour du HTML/CSS/JS"
+
+test:
+  stage: test
+  image: node:latest
+  before_script:
+    - npm install -g stylelint
+  script:
+    - stylelint "src/css/*.css"
+security:
+  stage: security
+  image: owasp/zap2docker-stable
+  script:
+    - zap-baseline.py -t http://localhost:8080
+
+package:
+  stage: package
+  script:
+    - tar -cvf mywebapp.tar.gz src/
+  artifacts:
+    paths:
+      - mywebapp.tar.gz
+
+quality:
+  stage: quality
+  script:
+    - echo "Contrôle qualité terminé"
+deploy:
+  stage: deploy
+  script:
+    - mkdir public
+    - cp -r src/* public/
+  artifacts:
+    paths:
+      - public
+  only:
+    - main
