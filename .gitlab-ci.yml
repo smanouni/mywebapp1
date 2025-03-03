@@ -30,9 +30,12 @@ test:
 
 security:
   stage: security
-  image: owasp/zap:latest
+  image: ghcr.io/zaproxy/zap:stable
+  before_script:
+    - echo "$GITHUB_TOKEN" | docker login ghcr.io -u USERNAME --password-stdin
   script:
     - zap-baseline.py -t http://localhost:8080
+
 
 package:
   stage: package
