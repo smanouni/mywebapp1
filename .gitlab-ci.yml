@@ -30,7 +30,7 @@ test:
 
 security:
   stage: security
-  image: ghcr.io/zaproxy/zap-stable
+  image: owasp/zap2docker-stable
   script:
     - zap-baseline.py -t http://localhost:8080
 
