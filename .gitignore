@@ -1,6 +1,18 @@
-# Include your project-specific ignores in this file
-# Read about how to use .gitignore: https://help.github.com/articles/ignoring-files
-# Useful .gitignore templates: https://github.com/github/gitignore
-node_modules
-dist
-.cache
+# Fichiers système
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# Dépendances Node.js ou Maven
+node_modules/
+.m2/
+
+# Build & cache
+dist/
+target/
+out/
