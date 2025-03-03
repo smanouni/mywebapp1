@@ -27,9 +27,10 @@ test:
     - npm install -g stylelint stylelint-config-standard
   script:
     - stylelint "src/css/*.css"
+    
 security:
   stage: security
-  image: owasp/zap
+  image: ghcr.io/zaproxy/zap-stable
   script:
     - zap-baseline.py -t http://localhost:8080
 
