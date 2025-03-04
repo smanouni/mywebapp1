@@ -30,15 +30,13 @@ test:
 
 security:
   stage: security
-  image: kalilinux/kali-rolling
   before_script:
-    - apt-get update && apt-get install -y wget unzip tar default-jdk
-    - wget -O ZAP.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
-    - mkdir -p zap && tar -xzf ZAP.tar.gz -C zap --strip-components=1
-    - export PATH=$PATH:$(pwd)/zap
-    - chmod +x zap/zap.sh
+    - echo "Téléchargement et installation de ZAP"
+    - curl -L -o ZAP.zip https://github.com/zaproxy/zaproxy/releases/latest/download/ZAP_2_14_0_Windows.zip
+    - powershell -Command "Expand-Archive -Path ZAP.zip -DestinationPath C:\ZAP"
   script:
-    - zap/zap.sh -cmd -quickurl http://localhost:8080 -quickprogress
+    - echo "Exécution de ZAP pour analyser l'application"
+    - C:\ZAP\zap.bat -cmd -quickurl "http://localhost:8000" -quickout "zap_report.html"
 
 package:
   stage: package
