@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Install HTMLHint
         run: |
@@ -22,7 +22,7 @@ jobs:
     needs: validate
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: No compilation needed
         run: echo "Pas de compilation nécessaire pour du HTML/CSS/JS"
@@ -32,7 +32,7 @@ jobs:
     needs: compile
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Install StyleLint
         run: |
@@ -44,7 +44,7 @@ jobs:
     needs: test
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: |
@@ -64,6 +64,7 @@ jobs:
           /opt/zap/zap.sh -cmd -quickurl "http://localhost:8000" -quickout "/opt/zap/zap_report.html"
 
   package:
+
     runs-on: ubuntu-latest
     needs: security
     steps:
@@ -74,25 +75,30 @@ jobs:
         run: tar -cvf mywebapp.tar.gz src/
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mywebapp
           path: mywebapp.tar.gz
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: package
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Deploy Application
-        run: |
-          mkdir public
-          cp -r src/* public/
+  runs-on: ubuntu-latest
 
-      - name: Upload public files
-        uses: actions/upload-artifact@v4
-        with:
-          name: public
-          path: public
+  steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+
+    - name: Upload Pages Artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: src/  # 📌 Ton dossier contenant HTML/CSS/JS
+
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
+
+      with:
+        name: public
+        path: public
