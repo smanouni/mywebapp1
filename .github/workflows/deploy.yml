@@ -1,0 +1,100 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install HTMLHint
+        run: |
+          npm install -g htmlhint
+          htmlhint src/index.html || true
+
+  compile:
+    runs-on: ubuntu-latest
+    needs: validate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: No compilation needed
+        run: echo "Pas de compilation nécessaire pour du HTML/CSS/JS"
+
+  test:
+    runs-on: ubuntu-latest
+    needs: compile
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install StyleLint
+        run: |
+          npm install -g stylelint stylelint-config-standard
+          stylelint "src/css/*.css"
+
+  security:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip openjdk-17-jdk
+
+      - name: Download and Install ZAP
+        run: |
+          wget -O ZAP_Linux.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.15.0/ZAP_2.15.0_Linux.tar.gz
+          mkdir -p /opt/zap
+          tar -xvzf ZAP_Linux.tar.gz -C /opt/zap --strip-components=1
+          echo "Java Version:"
+          java -version
+
+      - name: Run ZAP Security Scan
+        run: |
+          /opt/zap/zap.sh -cmd -quickurl "http://localhost:8000" -quickout "/opt/zap/zap_report.html"
+
+  package:
+
+    runs-on: ubuntu-latest
+    needs: security
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Package application
+        run: tar -cvf mywebapp.tar.gz src/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: mywebapp
+          path: mywebapp.tar.gz
+
+  deploy:
+
+    runs-on: ubuntu-latest
+    needs: package
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy Application
+        run: |
+          mkdir public
+          cp -r src/* public/
+
+      - name: Upload public files
+        uses: actions/upload-artifact@v3
+        with:
+          name: public
+          path: public
