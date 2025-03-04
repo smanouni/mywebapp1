@@ -30,17 +30,15 @@ test:
 
 security:
   stage: security
-  image: openjdk:21-slim
+  image: kalilinux/kali-rolling
   before_script:
-    - apt-get update && apt-get install -y wget unzip tar
-    - wget -O ZAP_Linux.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
-    - mkdir zap && tar -xzf ZAP_Linux.tar.gz -C zap --strip-components=1
+    - apt-get update && apt-get install -y wget unzip tar default-jdk
+    - wget -O ZAP.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.14.0/ZAP_2.14.0_Linux.tar.gz
+    - mkdir -p zap && tar -xzf ZAP.tar.gz -C zap --strip-components=1
     - export PATH=$PATH:$(pwd)/zap
     - chmod +x zap/zap.sh
   script:
     - zap/zap.sh -cmd -quickurl http://localhost:8080 -quickprogress
-
-
 
 package:
   stage: package
