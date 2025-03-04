@@ -32,7 +32,7 @@ security:
   stage: security
   before_script:
     - echo "Téléchargement et installation de ZAP"
-    - curl -L -o ZAP.zip https://github.com/zaproxy/zaproxy/releases/latest/download/ZAP_2_14_0_Windows.zip
+    - curl -L -o ZAP.zip https://github.com/zaproxy/zaproxy/releases/latest/download/ZAP_2_15_0_Windows.zip
     - powershell -Command "Expand-Archive -Path ZAP.zip -DestinationPath C:\ZAP"
   script:
     - echo "Exécution de ZAP pour analyser l'application"
