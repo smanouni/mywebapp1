@@ -27,18 +27,18 @@ test:
     - npm install -g stylelint stylelint-config-standard
   script:
     - stylelint "src/css/*.css"
-
 security:
   stage: security
-  image: mcr.microsoft.com/windows/servercore:ltsc2022  # Utilisation d'une image Windows
+  image: debian:latest
   before_script:
     - echo "Installation des dépendances"
-    - powershell -Command "Invoke-WebRequest -Uri 'https://github.com/zaproxy/zaproxy/releases/download/v2.15.0/ZAP_2_15_0_windows.exe' -OutFile 'C:\ZAP_2_15_0_windows.exe'"
-    - echo "Installation de ZAP"
-    - Start-Process -FilePath "C:\ZAP_2_15_0_windows.exe" -ArgumentList "/S" -Wait
+    - apt-get update && apt-get install -y wget unzip
+    - echo "Téléchargement et installation de ZAP"
+    - wget -O ZAP_Linux.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.15.0/ZAP_2.15.0_Linux.tar.gz
+    - mkdir -p /opt/zap && tar -xvzf ZAP_Linux.tar.gz -C /opt/zap --strip-components=1
   script:
     - echo "Exécution de ZAP pour analyser l'application"
-    - powershell -Command "& 'C:\Program Files\ZAP\zap.exe' -cmd -quickurl 'http://localhost:8000' -quickout 'C:\zap_report.html'"
+    - /opt/zap/zap.sh -cmd -quickurl "http://localhost:8000" -quickout "/opt/zap/zap_report.html"
 
 package:
   stage: package
