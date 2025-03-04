@@ -30,13 +30,16 @@ test:
 
 security:
   stage: security
+  image: debian:latest
   before_script:
+    - echo "Installation des dépendances"
+    - apt-get update && apt-get install -y wget unzip
     - echo "Téléchargement et installation de ZAP"
-    - curl -L -o ZAP.zip https://github.com/zaproxy/zaproxy/releases/latest/download/ZAP_2_15_0_Windows.zip
-    - powershell -Command "Expand-Archive -Path ZAP.zip -DestinationPath C:\ZAP"
+    - wget -O ZAP.tar.gz https://github.com/zaproxy/zaproxy/releases/latest/download/ZAP_2_14_0_Linux.tar.gz
+    - tar -xvzf ZAP.tar.gz -C /opt/
   script:
     - echo "Exécution de ZAP pour analyser l'application"
-    - C:\ZAP\zap.bat -cmd -quickurl "http://localhost:8000" -quickout "zap_report.html"
+    - /opt/ZAP_2_14_0/zap.sh -cmd -quickurl "http://localhost:8000" -quickout "zap_report.html"
 
 package:
   stage: package
