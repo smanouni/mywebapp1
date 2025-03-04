@@ -32,7 +32,7 @@ security:
   image: debian:latest
   before_script:
     - echo "Installation des dépendances"
-    - apt-get update && apt-get install -y wget unzip  openjdk-21-jdk
+    - apt-get update && apt-get install -y wget unzip  openjdk-17-jdk
     - echo "Téléchargement et installation de ZAP"
     - wget -O ZAP_Linux.tar.gz https://github.com/zaproxy/zaproxy/releases/download/v2.15.0/ZAP_2.15.0_Linux.tar.gz
     - mkdir -p /opt/zap && tar -xvzf ZAP_Linux.tar.gz -C /opt/zap --strip-components=1
