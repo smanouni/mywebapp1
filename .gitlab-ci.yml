@@ -30,16 +30,15 @@ test:
 
 security:
   stage: security
-  image: debian:latest
+  image: mcr.microsoft.com/windows/servercore:ltsc2022  # Utilisation d'une image Windows
   before_script:
     - echo "Installation des dépendances"
-    - apt-get update && apt-get install -y wget unzip
-    - echo "Téléchargement et installation de ZAP"
-    - wget -O ZAP.tar.gz https://github.com/zaproxy/zaproxy/releases/latest/download/ZAP_2_14_0_Linux.tar.gz
-    - tar -xvzf ZAP.tar.gz -C /opt/
+    - powershell -Command "Invoke-WebRequest -Uri 'https://github.com/zaproxy/zaproxy/releases/download/v2.15.0/ZAP_2_15_0_windows.exe' -OutFile 'C:\ZAP_2_15_0_windows.exe'"
+    - echo "Installation de ZAP"
+    - Start-Process -FilePath "C:\ZAP_2_15_0_windows.exe" -ArgumentList "/S" -Wait
   script:
     - echo "Exécution de ZAP pour analyser l'application"
-    - /opt/ZAP_2_14_0/zap.sh -cmd -quickurl "http://localhost:8000" -quickout "zap_report.html"
+    - powershell -Command "& 'C:\Program Files\ZAP\zap.exe' -cmd -quickurl 'http://localhost:8000' -quickout 'C:\zap_report.html'"
 
 package:
   stage: package
