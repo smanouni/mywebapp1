@@ -81,24 +81,27 @@ jobs:
           path: mywebapp.tar.gz
 
   deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write  # ✅ Ajout des permissions nécessaires
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  runs-on: ubuntu-latest
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: src/  # 📌 Vérifie que c'est bien le bon dossier contenant HTML/CSS/JS
 
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
 
-    - name: Upload Pages Artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: src/  # 📌 Ton dossier contenant HTML/CSS/JS
-
-    - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v4
-
-      with:
-        name: public
+        with:
+      - name: public
         path: public
+
